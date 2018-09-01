@@ -150,6 +150,30 @@ public abstract class BaseDatabaseConnection implements Serializable, Closeable 
   }
 
   /**
+   * TODO
+   * @param readOnly
+   */
+  public void setReadOnly(boolean readOnly) {
+    try {
+      getConnection().setReadOnly(readOnly);
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  /**
+   * TODO
+   */
+  public boolean isReadOnly() {
+    try {
+      return getConnection().isReadOnly();
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+
+  /**
    * Makes all changes made since the previous commit/rollback permanent and
    * releases any database locks currently held by this Connection object.
    * This method should be used only when auto-commit mode has been disabled.

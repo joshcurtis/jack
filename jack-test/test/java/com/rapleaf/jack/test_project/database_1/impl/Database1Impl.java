@@ -144,6 +144,14 @@ public class Database1Impl implements IDatabase1 {
     return conn.getAutoCommit();
   }
 
+  public void setReadOnly(boolean readOnly) {
+    conn.setReadOnly(readOnly);
+  }
+
+  public boolean isReadOnly() {
+    return conn.isReadOnly();
+  }
+
   public void commit() {
     conn.commit();
   }

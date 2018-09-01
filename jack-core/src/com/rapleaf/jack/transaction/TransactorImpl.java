@@ -42,23 +42,34 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
 
   @Override
   public <T> T query(IQuery<DB, T> query) {
-    return query(query, false);
+    return query(query, false, false);
   }
 
   @Override
   public <T> T queryAsTransaction(IQuery<DB, T> query) {
-    return query(query, true);
+    return query(query, true, false);
   }
 
   @Override
   public void execute(IExecution<DB> execution) {
-    execute(execution, false);
+    execute(execution, false, false);
   }
 
   @Override
   public void executeAsTransaction(IExecution<DB> execution) {
-    execute(execution, true);
+    execute(execution, true, false);
   }
+
+  @Override
+  public void read(IExecution<DB> execution) {
+    execute(execution, true, true);
+  }
+
+  @Override
+  public <T> T read(IQuery<DB, T> query) {
+    return query(query, true, true);
+  }
+
 
   TransactorMetrics getQueryMetrics() {
     if (!metricsTrackingEnabled) {
@@ -72,8 +83,13 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
     return dbManager.getMetrics();
   }
 
-  private <T> T query(IQuery<DB, T> query, boolean asTransaction) {
+  private <T> T query(
+      IQuery<DB, T> query,
+      boolean asTransaction,
+      boolean readOnly
+  ) {
     DB connection = dbManager.getConnection();
+    connection.setReadOnly(readOnly);
     connection.setAutoCommit(!asTransaction);
     try {
       long startTime = System.currentTimeMillis();
@@ -98,12 +114,17 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
     }
   }
 
-  private void execute(IExecution<DB> execution, boolean asTransaction) {
+  private void execute(
+      IExecution<DB> execution,
+      boolean asTransaction,
+      boolean readOnly
+  ) {
     query(db -> {
           execution.execute(db);
           return null;
         },
-        asTransaction
+        asTransaction,
+        readOnly
     );
   }
 

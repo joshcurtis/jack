@@ -125,6 +125,14 @@ public class <%=db_name%>Impl implements I<%=db_name%> {
     return conn.getAutoCommit();
   }
 
+  public void setReadOnly(boolean readOnly) {
+    conn.setReadOnly(readOnly);
+  }
+
+  public boolean isReadOnly() {
+    return conn.isReadOnly();
+  }
+
   public void commit() {
     conn.commit();
   }

@@ -14,11 +14,14 @@ public interface ITransactor<DB extends IDb> extends Closeable {
 
   void executeAsTransaction(IExecution<DB> execution);
 
+  void readAsTransaction(IExecution<DB> execution);
+
+  <T> T readAsTransaction(IQuery<DB, T> query);
+
   @Override
   void close();
 
   interface Builder<DB extends IDb, Impl extends ITransactor<DB>> {
     Impl get();
   }
-
 }

@@ -44,6 +44,10 @@ public interface IDb extends Serializable, Closeable {
 
   public boolean getAutoCommit();
 
+  public void setReadOnly(boolean readOnly);
+
+  public boolean isReadOnly();
+
   public void commit();
 
   public void rollback();
