@@ -99,28 +99,12 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
   }
 
   private void execute(IExecution<DB> execution, boolean asTransaction) {
-    DB connection = dbManager.getConnection();
-    connection.setAutoCommit(!asTransaction);
-    try {
-      long startTime = System.currentTimeMillis();
-      execution.execute(connection);
-      if (asTransaction) {
-        connection.commit();
-      }
-      long executionTime = System.currentTimeMillis() - startTime;
-      if (metricsTrackingEnabled) {
-        queryMetrics.update(executionTime, Thread.currentThread().getStackTrace()[3]);
-      }
-    } catch (Exception e) {
-      LOG.error("SQL execution failure", e);
-      if (asTransaction) {
-        connection.rollback();
-      }
-      throw new SqlExecutionFailureException(e);
-    } finally {
-      // connection should be reset in PooledObjectFactory
-      dbManager.returnConnection(connection);
-    }
+    query(db -> {
+          execution.execute(db);
+          return null;
+        },
+        asTransaction
+    );
   }
 
   @Override
