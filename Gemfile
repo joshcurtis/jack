@@ -5,4 +5,6 @@ gem 'fattr'
 
 group :test do
   gem "rspec", "~> 3.7"
+  gem "rake", "~> 12.0"
+  gem "rails", "~> 4.0"
 end
